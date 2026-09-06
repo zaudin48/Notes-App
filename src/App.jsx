@@ -1,27 +1,32 @@
-import  { useState } from "react";
-
+import  { useState , useEffect } from "react";
+import Notes from "./pages/notes";
+import axios from "axios";
 const App = () => {
-  const [title, setTitle] = useState("");
-  const [details, setDetails] = useState("");
-  const [notes, setNotes] = useState([]);
-  const formsubmit = (e) => {
-    e.preventDefault();
   
-    const newNote = [...notes];
-    newNote.push({ title, details });
-    setNotes(newNote);
+const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [notes, setNotes] = useState([{ _id: "1", title: "hello", description: "world" }]);
+  useEffect(() => {
+    axios.get("http://localhost:5000/notes").then((res) => {
+      setNotes(res.data.notes);
+    });
+    
+  },[])
+  
+  const formsubmit = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target);
+     await axios.post("http://localhost:5000/create-note", {
+      title: formData.get("title"),
+      description: formData.get("description"),
+    }).then((res)=>{
+      setNotes([...notes,res.data.note])
+    })
     setTitle("");
-    setDetails("");
+    setDescription("");
 
-  };
-   
-const deleteNote =(idx)=>{
-  const newNote = [...notes];
-  newNote.splice(idx,1)
-  setNotes(newNote)
-}
- 
-
+  }
+  
   return (
     <div className="h-full min-h-screen  bg-black text-white p-4 lg:flex">
    
@@ -30,10 +35,10 @@ const deleteNote =(idx)=>{
         onSubmit={formsubmit}
         className="flex flex-col gap-3 items-start p-8 lg:w-1/3 "
       ><h1 className="text-xl font-bold">Add Notes</h1>
-
+      
       {/*first input*/}
         <input
-          type="text" required
+          type="text" required name="title"
           placeholder="Enter Notes heading"
           className="border-2 border-yellow-500 p-2 rounded-md outline-none hover:border-orange-400 focus:border-yellow-20 w-full"
           value={title}
@@ -43,11 +48,11 @@ const deleteNote =(idx)=>{
         />
          {/* second input */}
         <textarea
-          placeholder="add your note" required
+          placeholder="add your note" required name="description"
           className="border-2 border-yellow-500 p-2 h-40 rounded-md outline-none hover:border-orange-400 focus:border-yellow-200 w-full"
-          value={details}
+          value={description}
           onChange={(e)=>{
-            setDetails(e.target.value);
+            setDescription(e.target.value);
           }}
        
        />
@@ -60,31 +65,7 @@ const deleteNote =(idx)=>{
         </button>
       </form>
 
-      {/* Notes */}
-  {    <div className="w-full  lg:w-2/3 p-8">
-        <h1 className="text-xl font-bold">Recent Notes</h1>
-         <div className="flex h-screen gap-4 flex-wrap overflow-y-auto p-4 ">
-         {notes.map(function(elem,idx){
-
-          return (
-              <div key={idx} className="border-2 border-yellow-500 rounded-md bg-white/10 p-4 h-50 w-40 hover:border-orange-400 flex flex-col items-start pb-4 text-wrap  justify-between relative">
-                <div className="overflow-y-scroll">
-                <h1 className="text-xl font-bold leading-tight">{elem.title}</h1>
-                <p className="text-gray-300 mt-3 text-wrap leading-tight font-medium">{elem.details}</p>
-                </div>
-                <button 
-                className="bg-red-500 hover:bg-red-400 text-white py-1 rounded w-full transition-all duration-200 active:scale-95 "
-                onClick={()=>{
-                  deleteNote(idx)
-                }}
-                >delete
-                </button>
-               </div>
-          )
-         })}
-         </div>
-
-      </div>}
+      <Notes notes={notes} setNotes={setNotes}/>
 
     </div>
   );

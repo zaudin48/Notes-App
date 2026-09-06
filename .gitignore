@@ -1,5 +1,24 @@
+# Dependencies
+
+node_modules/
+**/node_modules/
+
+# Environment variables / secrets
+
+.env
+.env.*
+!.env.example
+
+# Build / production files
+
+dist/
+dist-ssr/
+build/
+coverage/
+
 # Logs
-logs
+
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +26,48 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Local development
+
 *.local
 
 # Editor directories and files
+
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
+*.njsproj
 *.sln
 *.sw?
+
+# OS files
+
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Vite
+
+vite.config.*.timestamp-*
+
+# Testing
+
+.nyc_output/
+test-results/
+
+# Misc
+
+.cache/
+.parcel-cache/
+.turbo/
